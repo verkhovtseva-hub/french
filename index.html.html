@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Français — 10 минут в день</title>
+<link href="index.html_files/css2.css" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e12; --surface: #16161d; --surface2: #1e1e28;
+  --border: rgba(255,255,255,0.08); --accent: #c9a96e; --accent2: #7c9eff;
+  --text: #f0ede6; --text-muted: rgba(240,237,230,0.5); --text-dim: rgba(240,237,230,0.25);
+  --green: #5cb882; --red: #e07070; --radius: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 0 16px 40px; }
+body::before { content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(201,169,110,0.07) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+header { width: 100%; max-width: 700px; display: flex; align-items: center; justify-content: space-between; padding: 28px 0 24px; position: relative; z-index: 1; }
+.logo { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--accent); }
+.logo span { color: var(--text-muted); font-size: 14px; font-family: 'DM Sans', sans-serif; display: block; margin-top: 2px; font-weight: 300; }
+.timer-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.timer-svg circle.bg { stroke: var(--border); }
+.timer-svg circle.prog { stroke: var(--accent); stroke-dasharray: 188.5; stroke-dashoffset: 0; stroke-linecap: round; transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 1s linear, stroke 0.5s; }
+.timer-label { font-size: 17px; font-weight: 500; color: var(--text); position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); white-space: nowrap; }
+.timer-sub { font-size: 11px; color: var(--text-muted); text-align: center; letter-spacing: 0.08em; text-transform: uppercase; }
+main { width: 100%; max-width: 700px; position: relative; z-index: 1; }
+.tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin-bottom: 28px; }
+.tab { flex: 1; padding: 9px 12px; border-radius: 999px; background: none; border: none; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; text-align: center; }
+.tab.active { background: var(--surface2); color: var(--text); font-weight: 500; }
+.tab:hover:not(.active) { color: var(--text); }
+.panel { display: none; }
+.panel.active { display: block; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); min-height: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 2rem 1.5rem; cursor: pointer; position: relative; transition: border-color 0.2s, transform 0.15s; overflow: hidden; margin-bottom: 20px; }
+.card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.4; }
+.card:hover { border-color: rgba(201,169,110,0.25); transform: translateY(-1px); }
+.card-badge { position: absolute; top: 14px; left: 16px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); border-radius: 999px; padding: 2px 10px; }
+.card-hint { position: absolute; bottom: 14px; right: 16px; font-size: 11px; color: var(--text-dim); }
+.card-fr { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 600; color: var(--text); text-align: center; line-height: 1.2; margin-bottom: 8px; }
+.card-pron { font-size: 14px; color: var(--accent); text-align: center; }
+.card-ru { font-size: 20px; color: var(--accent2); text-align: center; margin-top: 14px; font-weight: 300; animation: fadeIn 0.25s ease; }
+.card-example { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; width: 100%; font-style: italic; line-height: 1.6; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.controls { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.progress-text { font-size: 12px; color: var(--text-muted); }
+.btn-row { display: flex; gap: 8px; }
+.btn { padding: 9px 20px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+.btn:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
+.btn-know { background: rgba(92,184,130,0.12); border-color: rgba(92,184,130,0.3); color: var(--green); }
+.btn-know:hover { background: rgba(92,184,130,0.2); }
+.btn-learn { background: rgba(224,112,112,0.1); border-color: rgba(224,112,112,0.25); color: var(--red); }
+.btn-learn:hover { background: rgba(224,112,112,0.18); }
+.btn-next { background: rgba(201,169,110,0.12); border-color: rgba(201,169,110,0.3); color: var(--accent); }
+.btn-next:hover { background: rgba(201,169,110,0.2); }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 12px; text-align: center; }
+.stat-n { font-size: 26px; font-weight: 500; color: var(--text); }
+.stat-l { font-size: 11px; color: var(--text-muted); margin-top: 3px; letter-spacing: 0.06em; text-transform: uppercase; }
+.stat-n.green { color: var(--green); }
+.stat-n.red { color: var(--red); }
+.streak-bar { display: flex; gap: 6px; margin-bottom: 24px; align-items: center; flex-wrap: wrap; }
+.streak-day { width: 30px; height: 30px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted); }
+.streak-day.done { background: rgba(92,184,130,0.15); border-color: rgba(92,184,130,0.35); color: var(--green); }
+.streak-day.today { border-color: var(--accent); color: var(--accent); }
+.streak-label { font-size: 11px; color: var(--text-dim); margin-left: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.filter-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-btn { padding: 5px 12px; border-radius: 999px; border: 1px solid var(--border); background: none; color: var(--text-muted); font-size: 12px; cursor: pointer; transition: all 0.15s; }
+.filter-btn.active { background: rgba(201,169,110,0.12); border-color: rgba(201,169,110,0.3); color: var(--accent); }
+.gram-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 18px; }
+.gram-title { font-family: 'Playfair Display', serif; font-size: 19px; color: var(--accent); margin-bottom: 14px; }
+.gram-rule { font-size: 14px; color: var(--text-muted); line-height: 1.8; margin-bottom: 10px; }
+.gram-example { font-size: 14px; color: var(--accent2); font-style: italic; margin-top: 8px; line-height: 1.7; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+td, th { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-muted); }
+th { background: rgba(255,255,255,0.04); color: var(--text); font-weight: 500; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+.done-screen { text-align: center; padding: 3rem 1rem; animation: fadeIn 0.4s ease; }
+.done-flag { font-size: 56px; margin-bottom: 16px; }
+.done-title { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--accent); margin-bottom: 8px; }
+.done-sub { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+.done-stats { display: flex; gap: 20px; justify-content: center; margin: 24px 0; }
+.done-stat { text-align: center; }
+.done-stat span { display: block; font-size: 28px; font-weight: 500; color: var(--text); }
+.done-stat small { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.btn-restart { margin-top: 20px; padding: 12px 32px; border-radius: 999px; background: rgba(201,169,110,0.12); border: 1px solid rgba(201,169,110,0.35); color: var(--accent); font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: pointer; }
+.btn-restart:hover { background: rgba(201,169,110,0.2); }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Le Français <span>10 минут в день</span></div>
+  <div class="timer-wrap">
+    <div style="position:relative;width:64px;height:64px;">
+      <svg width="64" height="64" viewBox="0 0 64 64">
+        <circle class="bg" cx="32" cy="32" r="28" fill="none" stroke-width="3"></circle>
+        <circle class="prog" id="timer-arc" cx="32" cy="32" r="28" fill="none" stroke-width="3"></circle>
+      </svg>
+      <span class="timer-label" id="timer-text">10:00</span>
+    </div>
+    <div class="timer-sub" id="timer-status">старт →</div>
+  </div>
+</header>
+<main>
+  <div class="streak-bar" id="streak-bar"><div class="streak-day">Пт</div><div class="streak-day">Сб</div><div class="streak-day">Вс</div><div class="streak-day">Пн</div><div class="streak-day">Вт</div><div class="streak-day">Ср</div><div class="streak-day today">Чт</div><span class="streak-label">серия: 0 дн.</span></div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('words',this)">🃏 Слова</button>
+    <button class="tab" onclick="switchTab('phrases',this)">💬 Фразы</button>
+    <button class="tab" onclick="switchTab('grammar',this)">📖 Грамматика</button>
+  </div>
+
+  <div class="panel active" id="panel-words">
+    <div class="filter-row" id="cat-filters"><button class="filter-btn active" onclick="setFilter('Все')">Все</button><button class="filter-btn" onclick="setFilter('Приветствия')">Приветствия</button><button class="filter-btn" onclick="setFilter('Вежливость')">Вежливость</button><button class="filter-btn" onclick="setFilter('Семья')">Семья</button><button class="filter-btn" onclick="setFilter('Квартира')">Квартира</button><button class="filter-btn" onclick="setFilter('Город')">Город</button><button class="filter-btn" onclick="setFilter('Время')">Время</button><button class="filter-btn" onclick="setFilter('Досуг')">Досуг</button><button class="filter-btn" onclick="setFilter('Глагол être')">Глагол être</button><button class="filter-btn" onclick="setFilter('Местоимения')">Местоимения</button><button class="filter-btn" onclick="setFilter('Прилагательные')">Прилагательные</button><button class="filter-btn" onclick="setFilter('Спорт')">Спорт</button><button class="filter-btn" onclick="setFilter('Хобби')">Хобби</button><button class="filter-btn" onclick="setFilter('Национальности')">Национальности</button><button class="filter-btn" onclick="setFilter('Артикли')">Артикли</button><button class="filter-btn" onclick="setFilter('Императив')">Императив</button></div>
+    <div class="card" id="word-card" onclick="flipWord()">
+      <div class="card-badge" id="w-cat">Приветствия</div>
+      <div class="card-fr" id="w-fr">Bonjour</div>
+      <div class="card-pron" id="w-pron">[бо-жур]</div>
+      <div id="w-ru" class="card-ru" style="display:none">Привет / Добрый день</div>
+      <div id="w-ex" class="card-example" style="display:none">✦ Bonjour! Comment ça va? → Привет! Как дела?</div>
+      <div class="card-hint" id="w-hint">нажми чтобы открыть</div>
+    </div>
+    <div class="controls">
+      <span class="progress-text" id="w-prog">1 / 100</span>
+      <div class="btn-row" id="w-btns" style="display:none">
+        <button class="btn btn-learn" onclick="markWord(false)">Не знал</button>
+        <button class="btn btn-know" onclick="markWord(true)">Знал ✓</button>
+      </div>
+      <button class="btn btn-next" id="w-next" style="display:none" onclick="nextWord()">Следующее →</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-n green" id="s-know">0</div><div class="stat-l">Знаю</div></div>
+      <div class="stat"><div class="stat-n red" id="s-nope">0</div><div class="stat-l">Учу</div></div>
+      <div class="stat"><div class="stat-n" id="s-tot">0</div><div class="stat-l">Всего</div></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-phrases">
+    <div class="card" id="ph-card" onclick="flipPhrase()">
+      <div class="card-badge" id="ph-cat">Знакомство</div>
+      <div class="card-fr" id="ph-fr" style="font-size:22px">Comment vous appelez-vous?</div>
+      <div class="card-pron" id="ph-pron">[ко-ман ву за-плэ-ву]</div>
+      <div id="ph-ru" class="card-ru" style="display:none">Как вас зовут?</div>
+      <div class="card-hint" id="ph-hint">нажми чтобы открыть</div>
+    </div>
+    <div class="controls">
+      <span class="progress-text" id="ph-prog">1 / 18</span>
+      <button class="btn btn-next" onclick="nextPhrase()">Следующая →</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-grammar">
+    <div id="gram-content"><div class="gram-card"><div class="gram-title">Глагол être — быть</div><p class="gram-rule">Важнейший глагол — нужен везде! Учи наизусть.</p><table><tbody><tr><th>Лицо</th><th>Форма</th><th>Пример</th></tr><tr><td>Je</td><td><strong>suis</strong></td><td>Je suis russe.</td></tr><tr><td>Tu</td><td><strong>es</strong></td><td>Tu es gentil.</td></tr><tr><td>Il / Elle</td><td><strong>est</strong></td><td>Elle est italienne.</td></tr><tr><td>Nous</td><td><strong>sommes</strong></td><td>Nous sommes amis.</td></tr><tr><td>Vous</td><td><strong>êtes</strong></td><td>Vous êtes madame Dupuis?</td></tr><tr><td>Ils / Elles</td><td><strong>sont</strong></td><td>Ils sont là.</td></tr></tbody></table><p class="gram-example">✦ C'est moi, Mireille! — Это я, Мирей!<br>✦ C'est lui. — Это он.</p></div></div>
+    <div class="controls">
+      <span class="progress-text" id="gr-prog">1 / 12</span>
+      <button class="btn btn-next" onclick="nextGram()">Следующая тема →</button>
+    </div>
+  </div>
+</main>
+
+<script>
+const WORDS = [
+  // Приветствия
+  {fr:"Bonjour",ru:"Привет / Добрый день",pron:"[бо-жур]",cat:"Приветствия",ex:"Bonjour! Comment ça va? → Привет! Как дела?"},
+  {fr:"Bonsoir",ru:"Добрый вечер",pron:"[бон-суар]",cat:"Приветствия",ex:"Bonsoir, madame. → Добрый вечер, мадам."},
+  {fr:"Salut",ru:"Привет (неформально)",pron:"[са-лю]",cat:"Приветствия",ex:"Salut! Ça va? → Привет! Как дела?"},
+  // Вежливость
+  {fr:"Merci beaucoup",ru:"Большое спасибо",pron:"[мэр-си бо-ку]",cat:"Вежливость",ex:"Merci beaucoup pour votre aide! → Большое спасибо за помощь!"},
+  {fr:"S'il vous plaît",ru:"Пожалуйста (формально)",pron:"[силь-ву-плэ]",cat:"Вежливость",ex:"Un café, s'il vous plaît. → Кофе, пожалуйста."},
+  {fr:"De rien",ru:"Не за что",pron:"[дё рьен]",cat:"Вежливость",ex:"Merci! — De rien. → Спасибо! — Не за что."},
+  {fr:"Excusez-moi",ru:"Извините",pron:"[экс-кю-зэ-муа]",cat:"Вежливость",ex:"Excusez-moi, où est la gare? → Извините, где вокзал?"},
+  // Семья (из урока февраль 2026)
+  {fr:"le père",ru:"отец",pron:"[лё пэр]",cat:"Семья",ex:"Le père de sa femme est médecin. → Отец его жены — врач."},
+  {fr:"la mère",ru:"мать",pron:"[ля мэр]",cat:"Семья",ex:"Martha aime sa mère. → Марта любит свою мать."},
+  {fr:"le frère",ru:"брат",pron:"[лё фрэр]",cat:"Семья",ex:"Mon frère cadet est étudiant. → Мой младший брат — студент."},
+  {fr:"la sœur",ru:"сестра",pron:"[ля сёр]",cat:"Семья",ex:"Mes sœurs habitent à Marseille. → Мои сёстры живут в Марселе."},
+  {fr:"la femme",ru:"жена / женщина",pron:"[ля фам]",cat:"Семья",ex:"Marcel parle avec sa femme. → Марсель разговаривает со своей женой."},
+  {fr:"le mari",ru:"муж",pron:"[лё ма-ри]",cat:"Семья",ex:"Mon mari est grand. → Мой муж высокий."},
+  {fr:"la fille",ru:"дочь / девочка",pron:"[ля фий]",cat:"Семья",ex:"Ses filles habitent à Marseille. → Его дочери живут в Марселе."},
+  {fr:"le fils",ru:"сын",pron:"[лё фис]",cat:"Семья",ex:"Mon fils joue au foot. → Мой сын играет в футбол."},
+  {fr:"l'ami / l'amie",ru:"друг / подруга",pron:"[ла-ми]",cat:"Семья",ex:"L'ami de Lucie est architecte. → Друг Люси — архитектор."},
+  // Квартира (из урока ноябрь 2025)
+  {fr:"le couloir",ru:"коридор",pron:"[лё ку-луар]",cat:"Квартира",ex:"Quand tu entres, il y a un couloir. → Когда входишь, есть коридор."},
+  {fr:"le salon",ru:"гостиная",pron:"[лё са-лон]",cat:"Квартира",ex:"Dans le salon, il y a un canapé. → В гостиной есть диван."},
+  {fr:"la cuisine",ru:"кухня",pron:"[ля кюи-зин]",cat:"Квартира",ex:"La cuisine est grande. → Кухня большая."},
+  {fr:"la salle de bain",ru:"ванная комната",pron:"[ля саль дё бэн]",cat:"Квартира",ex:"La salle de bain est à gauche. → Ванная слева."},
+  {fr:"la chambre",ru:"спальня / комната",pron:"[ля шамбр]",cat:"Квартира",ex:"Il y a deux chambres d'enfant. → Есть две детские комнаты."},
+  {fr:"la terrasse",ru:"терраса",pron:"[ля тэ-рас]",cat:"Квартира",ex:"Le salon donne sur la terrasse. → Гостиная выходит на террасу."},
+  {fr:"le canapé",ru:"диван",pron:"[лё ка-на-пэ]",cat:"Квартира",ex:"Dans le salon, il y a un canapé. → В гостиной есть диван."},
+  {fr:"le lit",ru:"кровать",pron:"[лё ли]",cat:"Квартира",ex:"Dans les chambres, on dort dans des lits. → В комнатах спят в кроватях."},
+  // Город (из урока январь 2026)
+  {fr:"à gauche",ru:"налево / слева",pron:"[а гош]",cat:"Город",ex:"Tournez à gauche. → Поверните налево."},
+  {fr:"à droite",ru:"направо / справа",pron:"[а друат]",cat:"Город",ex:"Tournez à droite. → Поверните направо."},
+  {fr:"tout droit",ru:"прямо",pron:"[ту друа]",cat:"Город",ex:"Continuez tout droit. → Продолжайте прямо."},
+  {fr:"traverser",ru:"пересекать / переходить",pron:"[тра-вэр-сэ]",cat:"Город",ex:"Tu traverses la place. → Ты переходишь площадь."},
+  {fr:"le pont",ru:"мост",pron:"[лё пон]",cat:"Город",ex:"Tu prends le pont du Faisan. → Ты идёшь по мосту."},
+  {fr:"la rue",ru:"улица",pron:"[ля рю]",cat:"Город",ex:"Tu prends la rue des Moulins. → Ты идёшь по улице Мельниц."},
+  {fr:"la place",ru:"площадь",pron:"[ля плас]",cat:"Город",ex:"Tu traverses la place Saint-Louis. → Ты пересекаешь площадь Сен-Луи."},
+  {fr:"la gare",ru:"вокзал",pron:"[ля гар]",cat:"Город",ex:"Marcel va à la gare. → Марсель идёт на вокзал."},
+  // Время (из урока март 2026)
+  {fr:"Quelle heure est-il?",ru:"Который час?",pron:"[кэль ёр э-тиль]",cat:"Время",ex:"Quelle heure est-il? — Il est trois heures. → Который час? — Три часа."},
+  {fr:"Il est midi",ru:"Полдень (12:00)",pron:"[иль э ми-ди]",cat:"Время",ex:"Il est midi et demie. → Половина первого."},
+  {fr:"Il est minuit",ru:"Полночь (00:00)",pron:"[иль э ми-нюи]",cat:"Время",ex:"Il est minuit. → Полночь."},
+  {fr:"et quart",ru:"и четверть (+15 мин)",pron:"[э кар]",cat:"Время",ex:"Il est six heures et quart. → Шесть часов пятнадцать."},
+  {fr:"et demie",ru:"и половина (+30 мин)",pron:"[э дёми]",cat:"Время",ex:"Il est six heures et demie. → Полседьмого."},
+  {fr:"moins le quart",ru:"без четверти",pron:"[муэн лё кар]",cat:"Время",ex:"Il est sept heures moins le quart. → Без четверти семь."},
+  // Досуг и развлечения (Sortir / Autres activités)
+  {fr:"aller au restaurant",ru:"идти в ресторан",pron:"[а-лэ о рэс-то-ран]",cat:"Досуг",ex:"On va au restaurant ce soir? → Идём в ресторан сегодня вечером?"},
+  {fr:"aller au café",ru:"идти в кафе",pron:"[а-лэ о ка-фэ]",cat:"Досуг",ex:"J'aime aller au café le matin. → Я люблю ходить в кафе по утрам."},
+  {fr:"aller au cinéma",ru:"идти в кино",pron:"[а-лэ о си-нэ-ма]",cat:"Досуг",ex:"Tu veux aller au cinéma? → Хочешь пойти в кино?"},
+  {fr:"aller au concert",ru:"идти на концерт",pron:"[а-лэ о кон-сэр]",cat:"Досуг",ex:"Nous allons au concert samedi. → Мы идём на концерт в субботу."},
+  {fr:"aller au théâtre",ru:"идти в театр",pron:"[а-лэ о тэ-атр]",cat:"Досуг",ex:"Elle aime aller au théâtre. → Она любит ходить в театр."},
+  {fr:"aller en discothèque",ru:"идти на дискотеку",pron:"[а-лэ ан диско-тэк]",cat:"Досуг",ex:"On va en discothèque ce week-end? → Идём на дискотеку на выходных?"},
+  {fr:"pêcher",ru:"ловить рыбу / рыбачить",pron:"[пэ-шэ]",cat:"Досуг",ex:"Mon père aime pêcher le dimanche. → Мой папа любит рыбачить в воскресенье."},
+  {fr:"jouer à la pétanque",ru:"играть в петанк",pron:"[жуэ а ля пэ-танк]",cat:"Досуг",ex:"Les Français aiment jouer à la pétanque. → Французы любят играть в петанк."},
+  {fr:"jouer de la musique",ru:"играть музыку",pron:"[жуэ дё ля мю-зик]",cat:"Досуг",ex:"Il joue de la musique tous les soirs. → Он играет музыку каждый вечер."},
+  {fr:"jouer aux jeux vidéos",ru:"играть в видеоигры",pron:"[жуэ о жё ви-дэо]",cat:"Досуг",ex:"Mon fils joue aux jeux vidéos. → Мой сын играет в видеоигры."},
+  {fr:"jouer aux cartes",ru:"играть в карты",pron:"[жуэ о карт]",cat:"Досуг",ex:"On joue aux cartes ce soir? → Сыграем в карты сегодня вечером?"},
+  {fr:"jouer aux jeux de société",ru:"играть в настольные игры",pron:"[жуэ о жё дё со-сьэ-тэ]",cat:"Досуг",ex:"Nous aimons jouer aux jeux de société en famille. → Мы любим играть в настольные игры семьёй."},
+  {fr:"regarder la télévision",ru:"смотреть телевизор",pron:"[рёгар-дэ ля тэлэ-визьон]",cat:"Досуг",ex:"Le soir, je regarde la télé. → Вечером я смотрю телевизор."},
+  {fr:"tricoter",ru:"вязать (спицами)",pron:"[три-ко-тэ]",cat:"Досуг",ex:"Ma grand-mère aime tricoter. → Моя бабушка любит вязать."},
+  {fr:"voyager",ru:"путешествовать",pron:"[вуа-йа-жэ]",cat:"Досуг",ex:"J'adore voyager en Europe. → Я обожаю путешествовать по Европе."},
+  {fr:"visiter / faire du tourisme",ru:"посещать / заниматься туризмом",pron:"[ви-зи-тэ / фэр дю ту-ризм]",cat:"Досуг",ex:"Nous visitons Paris ce week-end. → Мы посещаем Париж на выходных."},
+  {fr:"lire",ru:"читать",pron:"[лир]",cat:"Досуг",ex:"J'aime lire le soir. → Я люблю читать вечером."},
+  {fr:"faire des mots croisés",ru:"разгадывать кроссворды",pron:"[фэр дэ мо круа-зэ]",cat:"Досуг",ex:"Il fait des mots croisés le matin. → Он разгадывает кроссворды по утрам."},
+  {fr:"jouer aux échecs",ru:"играть в шахматы",pron:"[жуэ о зэ-шэк]",cat:"Досуг",ex:"Tu sais jouer aux échecs? → Ты умеешь играть в шахматы?"},
+  // Глагол être
+  {fr:"Je suis",ru:"Я есть",pron:"[жё сюи]",cat:"Глагол être",ex:"Je suis français. → Я француз."},
+  {fr:"Tu es",ru:"Ты есть",pron:"[тю э]",cat:"Глагол être",ex:"Tu es gentil. → Ты добрый."},
+  {fr:"Il/Elle est",ru:"Он/Она есть",pron:"[иль/эль э]",cat:"Глагол être",ex:"Elle est italienne. → Она итальянка."},
+  {fr:"Nous sommes",ru:"Мы есть",pron:"[ну сом]",cat:"Глагол être",ex:"Nous sommes amis. → Мы друзья."},
+  {fr:"Vous êtes",ru:"Вы есть",pron:"[ву зэт]",cat:"Глагол être",ex:"Vous êtes madame Dupuis? → Вы мадам Дюпюи?"},
+  {fr:"Ils/Elles sont",ru:"Они есть",pron:"[иль/эль сон]",cat:"Глагол être",ex:"Ils sont là. → Они здесь."},
+  // Местоимения (из урока март 2026)
+  {fr:"moi",ru:"я (ударное)",pron:"[муа]",cat:"Местоимения",ex:"Moi, je travaille. — Я работаю. / C'est moi. — Это я."},
+  {fr:"toi",ru:"ты (ударное)",pron:"[туа]",cat:"Местоимения",ex:"Et toi? — А ты? / C'est toi? — Это ты?"},
+  {fr:"lui",ru:"он (ударное)",pron:"[люи]",cat:"Местоимения",ex:"C'est lui. — Это он. / avec lui — с ним."},
+  {fr:"elle",ru:"она (ударное)",pron:"[эль]",cat:"Местоимения",ex:"C'est elle. — Это она. / sans elle — без неё."},
+  {fr:"nous",ru:"мы (ударное)",pron:"[ну]",cat:"Местоимения",ex:"Nous, nous allons au théâtre. → Мы идём в театр."},
+  {fr:"eux / elles",ru:"они (муж./жен. ударное)",pron:"[ё / эль]",cat:"Местоимения",ex:"Eux, ils vont au cirque. → Они (муж.) идут в цирк."},
+  // Притяжательные местоимения
+  {fr:"mon / ma / mes",ru:"мой / моя / мои",pron:"[мон / ма / мэ]",cat:"Местоимения",ex:"mon livre, ma table, mes amis → моя книга, мой стол, мои друзья"},
+  {fr:"ton / ta / tes",ru:"твой / твоя / твои",pron:"[тон / та / тэ]",cat:"Местоимения",ex:"C'est ta place? → Это твоё место?"},
+  {fr:"son / sa / ses",ru:"его / её / его-её",pron:"[сон / са / сэ]",cat:"Местоимения",ex:"Sa veste est beige. → Его куртка бежевая."},
+  // Прилагательные (из урока март 2026)
+  {fr:"beau / belle",ru:"красивый / красивая",pron:"[бо / бэль]",cat:"Прилагательные",ex:"une belle chanson → красивая песня"},
+  {fr:"nouveau / nouvelle",ru:"новый / новая",pron:"[ну-во / ну-вэль]",cat:"Прилагательные",ex:"un nouveau livre → новая книга"},
+  {fr:"vieux / vieille",ru:"старый / старая",pron:"[вьё / вьей]",cat:"Прилагательные",ex:"une vieille maison → старый дом"},
+  {fr:"long / longue",ru:"длинный / длинная",pron:"[лон / лонг]",cat:"Прилагательные",ex:"une longue nuit → длинная ночь"},
+  {fr:"grand / grande",ru:"большой / большая",pron:"[гран / гранд]",cat:"Прилагательные",ex:"une grande maison → большой дом"},
+  {fr:"jeune",ru:"молодой / молодая",pron:"[жён]",cat:"Прилагательные",ex:"un jeune professeur → молодой преподаватель"},
+  {fr:"intéressant / intéressante",ru:"интересный / интересная",pron:"[эн-тэ-рэ-сан / -сант]",cat:"Прилагательные",ex:"une vie intéressante → интересная жизнь"},
+  {fr:"difficile",ru:"трудный / трудная",pron:"[ди-фи-силь]",cat:"Прилагательные",ex:"un exercice difficile → трудное упражнение"},
+  // Спорт и хобби
+  {fr:"jouer au foot",ru:"играть в футбол",pron:"[жуэ о фут]",cat:"Спорт",ex:"Je joue au foot le week-end. → Я играю в футбол на выходных."},
+  {fr:"jouer au tennis",ru:"играть в теннис",pron:"[жуэ о тэнис]",cat:"Спорт",ex:"Elle joue au tennis depuis 5 ans. → Она играет в теннис уже 5 лет."},
+  {fr:"jouer du piano",ru:"играть на пианино",pron:"[жуэ дю пьяно]",cat:"Хобби",ex:"Il joue du piano depuis un an. → Он играет на пианино уже год."},
+  {fr:"faire du vélo",ru:"кататься на велосипеде",pron:"[фэр дю вэло]",cat:"Спорт",ex:"Mon frère fait du vélo tous les jours. → Мой брат катается каждый день."},
+  {fr:"faire de la natation",ru:"заниматься плаванием",pron:"[фэр дё ля ната-сьон]",cat:"Спорт",ex:"Je fais de la natation le matin. → Я плаваю по утрам."},
+  {fr:"faire de la randonnée",ru:"ходить в походы",pron:"[фэр дё ля рандо-нэ]",cat:"Спорт",ex:"Vous faites de la randonnée? → Вы ходите в походы?"},
+  // Национальности
+  {fr:"français / française",ru:"французский / французская",pron:"[фран-сэ / фран-сэз]",cat:"Национальности",ex:"Je suis française. → Я француженка."},
+  {fr:"russe",ru:"русский / русская",pron:"[рюс]",cat:"Национальности",ex:"Marie est russe. → Мари — русская."},
+  {fr:"italien / italienne",ru:"итальянский / итальянская",pron:"[ита-льен / ита-льен]",cat:"Национальности",ex:"Elle est italienne. → Она итальянка."},
+  {fr:"japonais / japonaise",ru:"японский / японская",pron:"[жапо-нэ / жапо-нэз]",cat:"Национальности",ex:"Je suis japonaise. → Я японка."},
+  {fr:"canadien / canadienne",ru:"канадский / канадская",pron:"[кана-дьен / кана-дьен]",cat:"Национальности",ex:"Nous sommes canadiens. → Мы канадцы."},
+  // Артикли contracté
+  {fr:"au (à + le)",ru:"к / в (мужской род)",pron:"[о]",cat:"Артикли",ex:"Je vais au parc. → Я иду в парк."},
+  {fr:"à la",ru:"к / в (женский род)",pron:"[а ля]",cat:"Артикли",ex:"Elle va à la gare. → Она идёт на вокзал."},
+  {fr:"à l'",ru:"к / в (перед гласной)",pron:"[а ль]",cat:"Артикли",ex:"Je retourne à l'hôpital. → Я возвращаюсь в больницу."},
+  {fr:"aux (à + les)",ru:"к / в (множественное число)",pron:"[о]",cat:"Артикли",ex:"Ils répondent aux professeurs. → Они отвечают преподавателям."},
+  // Императив
+  {fr:"Écoutez!",ru:"Слушайте!",pron:"[эку-тэ]",cat:"Императив",ex:"Écoutez la musique! → Слушайте музыку!"},
+  {fr:"Répétez!",ru:"Повторите!",pron:"[рэпэ-тэ]",cat:"Императив",ex:"Répétez, s'il vous plaît. → Повторите, пожалуйста."},
+  {fr:"Ouvrez la fenêtre!",ru:"Откройте окно!",pron:"[ув-рэ ля фнэтр]",cat:"Императив",ex:"Ouvrez la fenêtre! → Откройте окно!"},
+  {fr:"Fermez la porte!",ru:"Закройте дверь!",pron:"[фэр-мэ ля порт]",cat:"Императив",ex:"Fermez la porte, s'il vous plaît. → Закройте дверь."},
+  {fr:"Faites les devoirs!",ru:"Делайте домашнее задание!",pron:"[фэт лэ дёвуар]",cat:"Императив",ex:"Faites les devoirs pour demain. → Сделайте ДЗ на завтра."},
+];
+
+const PHRASES = [
+  {fr:"Comment vous appelez-vous?",ru:"Как вас зовут?",pron:"[ко-ман ву за-плэ-ву]",cat:"Знакомство"},
+  {fr:"Je m'appelle...",ru:"Меня зовут...",pron:"[жё ма-пэль]",cat:"Знакомство"},
+  {fr:"Enchanté(e)!",ru:"Очень приятно!",pron:"[ан-шан-тэ]",cat:"Знакомство"},
+  {fr:"Moi, je travaille. Et toi?",ru:"Я работаю. А ты?",pron:"[муа жё тра-вай э туа]",cat:"О себе"},
+  {fr:"Nous sommes juste amis.",ru:"Мы просто друзья.",pron:"[ну сом жюст а-ми]",cat:"О себе"},
+  {fr:"C'est lui / C'est elle.",ru:"Это он / Это она.",pron:"[сэ люи / сэ эль]",cat:"О людях"},
+  {fr:"Quelle heure est-il?",ru:"Который час?",pron:"[кэль ёр э-тиль]",cat:"Время"},
+  {fr:"Il est six heures et demie.",ru:"Половина седьмого.",pron:"[иль э си зёр э дёми]",cat:"Время"},
+  {fr:"Il est sept heures moins le quart.",ru:"Без четверти семь.",pron:"[иль э сэт ёр муэн лё кар]",cat:"Время"},
+  {fr:"Où est la gare?",ru:"Где находится вокзал?",pron:"[у э ля гар]",cat:"Город"},
+  {fr:"Tournez à gauche, puis à droite.",ru:"Поверните налево, потом направо.",pron:"[тур-нэ а гош, пюи а друат]",cat:"Город"},
+  {fr:"Continuez tout droit.",ru:"Продолжайте прямо.",pron:"[кон-ти-нюэ ту друа]",cat:"Город"},
+  {fr:"C'est le sac de mon amie.",ru:"Это сумка моей подруги.",pron:"[сэ лё сак дё мон а-ми]",cat:"Притяжание"},
+  {fr:"Le père de sa femme est médecin.",ru:"Отец его жены — врач.",pron:"[лё пэр дё са фам э мэд-сэн]",cat:"Притяжание"},
+  {fr:"Je ne comprends pas.",ru:"Я не понимаю.",pron:"[жё нё ком-пран па]",cat:"Общение"},
+  {fr:"Parlez plus lentement, s'il vous plaît.",ru:"Говорите медленнее, пожалуйста.",pron:"[пар-лэ плю лант-ман]",cat:"Общение"},
+  {fr:"L'addition, s'il vous plaît.",ru:"Счёт, пожалуйста.",pron:"[ла-ди-сьон, силь-ву-плэ]",cat:"Ресторан"},
+  {fr:"À bientôt!",ru:"До скорого!",pron:"[а бьен-то]",cat:"Прощание"},
+];
+
+const GRAMMAR = [
+  {title:"Глагол être — быть",html:`<p class="gram-rule">Важнейший глагол — нужен везде! Учи наизусть.</p><table><tr><th>Лицо</th><th>Форма</th><th>Пример</th></tr><tr><td>Je</td><td><strong>suis</strong></td><td>Je suis russe.</td></tr><tr><td>Tu</td><td><strong>es</strong></td><td>Tu es gentil.</td></tr><tr><td>Il / Elle</td><td><strong>est</strong></td><td>Elle est italienne.</td></tr><tr><td>Nous</td><td><strong>sommes</strong></td><td>Nous sommes amis.</td></tr><tr><td>Vous</td><td><strong>êtes</strong></td><td>Vous êtes madame Dupuis?</td></tr><tr><td>Ils / Elles</td><td><strong>sont</strong></td><td>Ils sont là.</td></tr></table><p class="gram-example">✦ C'est moi, Mireille! — Это я, Мирей!<br>✦ C'est lui. — Это он.</p>`},
+  {title:"Артикли — le, la, les, un, une",html:`<p class="gram-rule">Артикль обязателен перед каждым существительным.</p><table><tr><th>Тип</th><th>Мужской</th><th>Женский</th><th>Множ.</th></tr><tr><td>Определённый</td><td><strong>le</strong> livre</td><td><strong>la</strong> maison</td><td><strong>les</strong> amis</td></tr><tr><td>Неопределённый</td><td><strong>un</strong> chat</td><td><strong>une</strong> table</td><td><strong>des</strong> pommes</td></tr></table><p class="gram-example">✦ Le chat est sur la table. — Кот на столе.<br>✦ C'est une rue. — Это улица.<br>✦ Ce sont des maisons. — Это дома.</p>`},
+  {title:"Артикли contracté — au, à la, aux",html:`<p class="gram-rule">Предлог <strong>à</strong> сливается с артиклем: à + le = <strong>au</strong>, à + les = <strong>aux</strong>.</p><table><tr><th>Форма</th><th>Когда</th><th>Пример</th></tr><tr><td><strong>au</strong></td><td>мужской род</td><td>Je vais <strong>au</strong> parc.</td></tr><tr><td><strong>à la</strong></td><td>женский род</td><td>Elle va <strong>à la</strong> gare.</td></tr><tr><td><strong>à l'</strong></td><td>перед гласной</td><td>Je retourne <strong>à l'</strong>hôpital.</td></tr><tr><td><strong>aux</strong></td><td>множественное</td><td>Ils répondent <strong>aux</strong> professeurs.</td></tr></table><p class="gram-example">✦ Je vais au parc. — Я иду в парк.<br>✦ Ils jouent aux échecs. — Они играют в шахматы.</p>`},
+  {title:"Притяжательные местоимения",html:`<p class="gram-rule">Зависят НЕ от владельца, а от рода предмета!</p><table><tr><th>Лицо</th><th>Муж. ед.</th><th>Жен. ед.</th><th>Мн. число</th><th>Перевод</th></tr><tr><td>je</td><td><strong>mon</strong></td><td><strong>ma</strong></td><td><strong>mes</strong></td><td>мой/моя/мои</td></tr><tr><td>tu</td><td><strong>ton</strong></td><td><strong>ta</strong></td><td><strong>tes</strong></td><td>твой/твоя/твои</td></tr><tr><td>il/elle</td><td><strong>son</strong></td><td><strong>sa</strong></td><td><strong>ses</strong></td><td>его/её</td></tr><tr><td>nous</td><td><strong>notre</strong></td><td><strong>notre</strong></td><td><strong>nos</strong></td><td>наш/наши</td></tr><tr><td>vous</td><td><strong>votre</strong></td><td><strong>votre</strong></td><td><strong>vos</strong></td><td>ваш/ваши</td></tr><tr><td>ils/elles</td><td><strong>leur</strong></td><td><strong>leur</strong></td><td><strong>leurs</strong></td><td>их</td></tr></table><p class="gram-example">✦ son livre — его/её книга (livre = муж. род!)<br>✦ mon amie — моя подруга (перед гласной → mon, не ma)</p>`},
+  {title:"Ударные местоимения — moi, toi, lui...",html:`<p class="gram-rule">Используются для усиления, после предлогов и после c'est.</p><table><tr><th>Безударное</th><th>Ударное</th><th>Перевод</th></tr><tr><td>je</td><td><strong>moi</strong></td><td>я</td></tr><tr><td>tu</td><td><strong>toi</strong></td><td>ты</td></tr><tr><td>il</td><td><strong>lui</strong></td><td>он</td></tr><tr><td>elle</td><td><strong>elle</strong></td><td>она</td></tr><tr><td>nous</td><td><strong>nous</strong></td><td>мы</td></tr><tr><td>vous</td><td><strong>vous</strong></td><td>вы</td></tr><tr><td>ils</td><td><strong>eux</strong></td><td>они (м.р.)</td></tr><tr><td>elles</td><td><strong>elles</strong></td><td>они (ж.р.)</td></tr></table><p class="gram-example">✦ Moi, je travaille. — Я работаю (с акцентом).<br>✦ C'est lui. — Это он.<br>✦ avec moi — со мной / sans elle — без неё</p>`},
+  {title:"Который час — Quelle heure est-il?",html:`<p class="gram-rule">Время во французском: <strong>Il est + число + heures</strong></p><table><tr><th>Время</th><th>Формально</th><th>Неформально</th></tr><tr><td>18:00</td><td>dix-huit heures</td><td>six heures du soir</td></tr><tr><td>18:15</td><td>dix-huit heures quinze</td><td>six heures et quart</td></tr><tr><td>18:30</td><td>dix-huit heures trente</td><td>six heures et demie</td></tr><tr><td>18:45</td><td>dix-huit heures quarante-cinq</td><td>sept heures moins le quart</td></tr><tr><td>12:00</td><td>douze heures</td><td>midi</td></tr><tr><td>00:00</td><td>zéro heure</td><td>minuit</td></tr></table><p class="gram-example">✦ Il est six heures et demie. — Половина седьмого.<br>✦ Il est midi. — Полдень.</p>`},
+  {title:"Прилагательные — мужской и женский род",html:`<p class="gram-rule">В женском роде обычно добавляется <strong>-e</strong>. Некоторые меняются сильнее.</p><table><tr><th>Мужской</th><th>Женский</th><th>Перевод</th></tr><tr><td>grand</td><td>grand<strong>e</strong></td><td>большой/ая</td></tr><tr><td>intéressant</td><td>intéressant<strong>e</strong></td><td>интересный/ая</td></tr><tr><td>beau</td><td>belle</td><td>красивый/ая</td></tr><tr><td>nouveau</td><td>nouvelle</td><td>новый/ая</td></tr><tr><td>vieux</td><td>vieille</td><td>старый/ая</td></tr><tr><td>long</td><td>longue</td><td>длинный/ая</td></tr></table><p class="gram-example">✦ une belle chanson — красивая песня<br>✦ un nouveau livre — новая книга<br>✦ une longue nuit — длинная ночь</p>`},
+  {title:"Отрицание — ne...pas",html:`<p class="gram-rule">Схема: <strong>ne + глагол + pas</strong></p><table><tr><th>Утверждение</th><th>Отрицание</th></tr><tr><td>Je parle français.</td><td>Je <strong>ne</strong> parle <strong>pas</strong> français.</td></tr><tr><td>Il est là.</td><td>Il <strong>n'est pas</strong> là.</td></tr><tr><td>Ce sont des rues.</td><td>Ce <strong>ne sont pas</strong> des rues.</td></tr></table><p class="gram-example">✦ Annette n'est pas là. — Аннет нет дома.<br>✦ Ce n'est pas une rue, c'est une avenue. — Это не улица, это авеню.</p>`},
+  {title:"Faire ou Jouer — спорт и хобби",html:`<p class="gram-rule">Два глагола для занятий спортом — у каждого свои правила!</p><table><tr><th>JOUER (играть)</th><th>FAIRE (заниматься)</th></tr><tr><td><strong>au/à la/aux</strong> — игры и командные виды:<br>jouer au foot, au tennis,<br>jouer aux échecs</td><td><strong>du/de la/de l'</strong> — активности:<br>faire du vélo, du yoga,<br>faire de la natation</td></tr><tr><td><strong>du/de la</strong> — инструмент:<br>jouer du piano, de la guitare</td><td></td></tr></table><p class="gram-example">✦ Je joue au foot. — Я играю в футбол.<br>✦ Elle fait de la natation. — Она плавает.<br>✦ Il joue du piano. — Он играет на пианино.</p>`},
+  {title:"Императив — команды",html:`<p class="gram-rule">Три формы: <strong>tu</strong> (ты), <strong>nous</strong> (мы), <strong>vous</strong> (вы).</p><table><tr><th>Русский</th><th>vous</th><th>tu</th><th>nous</th></tr><tr><td>Слушайте!</td><td>Écoutez!</td><td>Écoute!</td><td>Écoutons!</td></tr><tr><td>Смотрите!</td><td>Regardez!</td><td>Regarde!</td><td>Regardons!</td></tr><tr><td>Откройте!</td><td>Ouvrez!</td><td>Ouvre!</td><td>Ouvrons!</td></tr><tr><td>Закройте!</td><td>Fermez!</td><td>Ferme!</td><td>Fermons!</td></tr><tr><td>Возьмите!</td><td>Prenez!</td><td>Prends!</td><td>Prenons!</td></tr></table><p class="gram-example">✦ Répétez, s'il vous plaît! — Повторите, пожалуйста!<br>✦ Faites les devoirs. — Делайте домашнее задание.</p>`},
+  {title:"Числа 1–100",html:`<table><tr><th>№</th><th>Французский</th><th>Произн.</th><th>№</th><th>Французский</th><th>Произн.</th></tr><tr><td>1</td><td>un/une</td><td>[ын]</td><td>11</td><td>onze</td><td>[онз]</td></tr><tr><td>2</td><td>deux</td><td>[дё]</td><td>20</td><td>vingt</td><td>[вэн]</td></tr><tr><td>3</td><td>trois</td><td>[труа]</td><td>30</td><td>trente</td><td>[трант]</td></tr><tr><td>4</td><td>quatre</td><td>[катр]</td><td>40</td><td>quarante</td><td>[ка-рант]</td></tr><tr><td>5</td><td>cinq</td><td>[сэнк]</td><td>50</td><td>cinquante</td><td>[сэн-кант]</td></tr><tr><td>6</td><td>six</td><td>[сис]</td><td>60</td><td>soixante</td><td>[суа-сант]</td></tr><tr><td>7</td><td>sept</td><td>[сэт]</td><td>70</td><td>soixante-dix</td><td>[суа-сант-дис]</td></tr><tr><td>8</td><td>huit</td><td>[юит]</td><td>80</td><td>quatre-vingts</td><td>[катр-вэн]</td></tr><tr><td>9</td><td>neuf</td><td>[нёф]</td><td>90</td><td>quatre-vingt-dix</td><td>[катр-вэн-дис]</td></tr><tr><td>10</td><td>dix</td><td>[дис]</td><td>100</td><td>cent</td><td>[сан]</td></tr></table><p class="gram-example">✦ Il est dix-huit heures. — 18:00.<br>✦ J'ai vingt-cinq ans. — Мне 25 лет.</p>`},
+  {title:"Глагол avoir — иметь",html:`<p class="gram-rule">Нужен для описания того, что у тебя есть, и для выражения возраста.</p><table><tr><th>Лицо</th><th>Форма</th><th>Пример</th></tr><tr><td>Je</td><td><strong>ai</strong></td><td>J'ai un chat.</td></tr><tr><td>Tu</td><td><strong>as</strong></td><td>Tu as quel âge?</td></tr><tr><td>Il / Elle</td><td><strong>a</strong></td><td>Elle a 25 ans.</td></tr><tr><td>Nous</td><td><strong>avons</strong></td><td>Nous avons deux enfants.</td></tr><tr><td>Vous</td><td><strong>avez</strong></td><td>Vous avez une voiture?</td></tr><tr><td>Ils / Elles</td><td><strong>ont</strong></td><td>Ils ont des enfants.</td></tr></table><p class="gram-example">✦ J'ai une grande famille. — У меня большая семья.<br>✦ Elle a 25 ans. — Ей 25 лет.</p>`},
+];
+
+let wIdx=0, wFlipped=false, wKnown=0, wLearn=0;
+let pIdx=0, pFlipped=false;
+let gIdx=0;
+let totalSec=600, timerInt=null, timerStarted=false;
+let activeCat='Все', filteredWords=[];
+
+function getCategories() { return ['Все', ...new Set(WORDS.map(w=>w.cat))]; }
+function buildFilters() {
+  const row=document.getElementById('cat-filters');
+  row.innerHTML=getCategories().map(c=>`<button class="filter-btn${c===activeCat?' active':''}" onclick="setFilter('${c}')">${c}</button>`).join('');
+}
+function setFilter(cat) {
+  activeCat=cat; filteredWords=cat==='Все'?[...WORDS]:WORDS.filter(w=>w.cat===cat);
+  wIdx=0; wFlipped=false; buildFilters(); showWord();
+}
+function loadStreak(){try{return JSON.parse(localStorage.getItem('fr_streak')||'[]');}catch(e){return[];}}
+function saveStreak(arr){try{localStorage.setItem('fr_streak',JSON.stringify(arr));}catch(e){}}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function renderStreak(){
+  const arr=loadStreak(),today=todayStr(),bar=document.getElementById('streak-bar');
+  const days=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const s=d.toISOString().slice(0,10);const label=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()];days.push({s,label,done:arr.includes(s),today:s===today});}
+  bar.innerHTML=days.map(d=>`<div class="streak-day${d.done?' done':''}${d.today&&!d.done?' today':''}">${d.done?'✓':d.label}</div>`).join('')+`<span class="streak-label">серия: ${getStreakCount(arr)} дн.</span>`;
+}
+function getStreakCount(arr){let c=0,d=new Date();while(true){const s=d.toISOString().slice(0,10);if(arr.includes(s)){c++;d.setDate(d.getDate()-1);}else break;}return c;}
+function markToday(){const arr=loadStreak(),t=todayStr();if(!arr.includes(t)){arr.push(t);saveStreak(arr);}renderStreak();}
+function startTimer(){if(timerStarted)return;timerStarted=true;document.getElementById('timer-status').textContent='идёт';timerInt=setInterval(()=>{totalSec--;updateTimerUI();if(totalSec<=0){clearInterval(timerInt);finishSession();}},1000);}
+function updateTimerUI(){const m=Math.floor(totalSec/60),s=totalSec%60;document.getElementById('timer-text').textContent=m+':'+(s<10?'0':'')+s;const pct=totalSec/600,c=188.5;document.getElementById('timer-arc').style.strokeDashoffset=Math.round(c*(1-pct));if(totalSec<=60)document.getElementById('timer-arc').style.stroke='#e07070';else if(totalSec<=180)document.getElementById('timer-arc').style.stroke='#c9a96e';}
+function finishSession(){markToday();document.querySelector('main').innerHTML=`<div style="text-align:center;padding:3rem 1rem;animation:fadeIn 0.4s ease"><div style="font-size:56px;margin-bottom:16px">🇫🇷</div><div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--accent);margin-bottom:8px">Bravo! Отличная работа!</div><p style="font-size:15px;color:var(--text-muted)">10 минут французского — сделано на сегодня.</p><div style="display:flex;gap:20px;justify-content:center;margin:24px 0"><div style="text-align:center"><span style="display:block;font-size:28px;font-weight:500">${wKnown}</span><small style="font-size:12px;color:var(--text-muted);text-transform:uppercase">Знал</small></div><div style="text-align:center"><span style="display:block;font-size:28px;font-weight:500">${wLearn}</span><small style="font-size:12px;color:var(--text-muted);text-transform:uppercase">Учу</small></div><div style="text-align:center"><span style="display:block;font-size:28px;font-weight:500">${wKnown+wLearn}</span><small style="font-size:12px;color:var(--text-muted);text-transform:uppercase">Карточек</small></div></div><p style="font-size:15px;color:var(--text-muted)">Возвращайся завтра!<br>À demain! 👋</p><button class="btn-restart" onclick="location.reload()">Ещё раз →</button></div>`;}
+function showWord(){const w=filteredWords[wIdx];if(!w)return;wFlipped=false;document.getElementById('w-cat').textContent=w.cat;document.getElementById('w-fr').textContent=w.fr;document.getElementById('w-pron').textContent=w.pron;document.getElementById('w-ru').textContent=w.ru;document.getElementById('w-ex').textContent='✦ '+w.ex;document.getElementById('w-ru').style.display='none';document.getElementById('w-ex').style.display='none';document.getElementById('w-btns').style.display='none';document.getElementById('w-next').style.display='none';document.getElementById('w-hint').textContent='нажми чтобы открыть';document.getElementById('w-prog').textContent=(wIdx+1)+' / '+filteredWords.length;}
+function flipWord(){if(wFlipped)return;wFlipped=true;document.getElementById('w-ru').style.display='block';document.getElementById('w-ex').style.display='block';document.getElementById('w-btns').style.display='flex';document.getElementById('w-hint').textContent='знал?';startTimer();}
+function markWord(ok){if(ok)wKnown++;else wLearn++;document.getElementById('w-btns').style.display='none';document.getElementById('w-next').style.display='block';document.getElementById('s-know').textContent=wKnown;document.getElementById('s-nope').textContent=wLearn;document.getElementById('s-tot').textContent=wKnown+wLearn;}
+function nextWord(){wIdx=(wIdx+1)%filteredWords.length;showWord();}
+function showPhrase(){const p=PHRASES[pIdx];pFlipped=false;document.getElementById('ph-cat').textContent=p.cat;document.getElementById('ph-fr').textContent=p.fr;document.getElementById('ph-pron').textContent=p.pron;document.getElementById('ph-ru').textContent=p.ru;document.getElementById('ph-ru').style.display='none';document.getElementById('ph-hint').textContent='нажми чтобы открыть';document.getElementById('ph-prog').textContent=(pIdx+1)+' / '+PHRASES.length;}
+function flipPhrase(){if(pFlipped)return;pFlipped=true;document.getElementById('ph-ru').style.display='block';document.getElementById('ph-hint').textContent='✓';startTimer();}
+function nextPhrase(){pIdx=(pIdx+1)%PHRASES.length;showPhrase();}
+function showGram(){const g=GRAMMAR[gIdx];document.getElementById('gram-content').innerHTML=`<div class="gram-card"><div class="gram-title">${g.title}</div>${g.html}</div>`;document.getElementById('gr-prog').textContent=(gIdx+1)+' / '+GRAMMAR.length;}
+function nextGram(){gIdx=(gIdx+1)%GRAMMAR.length;showGram();}
+function switchTab(name,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active');btn.classList.add('active');startTimer();}
+document.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){const a=document.querySelector('.panel.active');if(a&&a.id==='panel-words'&&!wFlipped)flipWord();if(a&&a.id==='panel-phrases'&&!pFlipped)flipPhrase();}});
+filteredWords=[...WORDS];
+buildFilters();
+renderStreak();
+showWord();
+showPhrase();
+showGram();
+</script>
+
+
+</body></html>
