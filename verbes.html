@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Verbes — Глаголы французского</title>
+<link href="verbes_files/css2.css" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e12; --surface: #16161d; --surface2: #1e1e28;
+  --border: rgba(255,255,255,0.08); --accent: #c9a96e; --accent2: #7c9eff;
+  --text: #f0ede6; --text-muted: rgba(240,237,230,0.5); --text-dim: rgba(240,237,230,0.25);
+  --green: #5cb882; --red: #e07070; --radius: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 0 16px 40px; }
+body::before { content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(201,169,110,0.07) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+header { width: 100%; max-width: 700px; display: flex; align-items: center; justify-content: space-between; padding: 28px 0 24px; position: relative; z-index: 1; }
+.logo { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--accent); }
+.logo span { color: var(--text-muted); font-size: 14px; font-family: 'DM Sans', sans-serif; display: block; margin-top: 2px; font-weight: 300; }
+main { width: 100%; max-width: 700px; position: relative; z-index: 1; }
+.filter-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-btn { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border); background: none; color: var(--text-muted); font-size: 12px; cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+.filter-btn.active { background: rgba(201,169,110,0.12); border-color: rgba(201,169,110,0.3); color: var(--accent); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); min-height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; cursor: pointer; position: relative; transition: border-color 0.2s, transform 0.15s; overflow: hidden; margin-bottom: 20px; }
+.card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.4; }
+.card:hover { border-color: rgba(201,169,110,0.25); transform: translateY(-1px); }
+.card-badge { position: absolute; top: 14px; left: 16px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); border-radius: 999px; padding: 2px 10px; }
+.card-num { position: absolute; top: 14px; right: 16px; font-size: 11px; color: var(--text-dim); }
+.card-hint { position: absolute; bottom: 14px; right: 16px; font-size: 11px; color: var(--text-dim); }
+.card-fr { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 600; color: var(--text); text-align: center; line-height: 1.2; margin-bottom: 8px; }
+.card-pron { font-size: 14px; color: var(--accent); text-align: center; margin-top: 4px; }
+.card-ru { font-size: 20px; color: var(--accent2); text-align: center; margin-top: 16px; font-weight: 300; animation: fadeIn 0.25s ease; }
+.card-example { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; width: 100%; font-style: italic; line-height: 1.6; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.controls { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.progress-text { font-size: 12px; color: var(--text-muted); }
+.btn-row { display: flex; gap: 8px; }
+.btn { padding: 9px 20px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+.btn-know { background: rgba(92,184,130,0.12); border-color: rgba(92,184,130,0.3); color: var(--green); }
+.btn-know:hover { background: rgba(92,184,130,0.2); }
+.btn-learn { background: rgba(224,112,112,0.1); border-color: rgba(224,112,112,0.25); color: var(--red); }
+.btn-learn:hover { background: rgba(224,112,112,0.18); }
+.btn-next { background: rgba(201,169,110,0.12); border-color: rgba(201,169,110,0.3); color: var(--accent); }
+.btn-next:hover { background: rgba(201,169,110,0.2); }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 12px; text-align: center; }
+.stat-n { font-size: 26px; font-weight: 500; }
+.stat-l { font-size: 11px; color: var(--text-muted); margin-top: 3px; letter-spacing: 0.06em; text-transform: uppercase; }
+.done-screen { text-align: center; padding: 3rem 1rem; animation: fadeIn 0.4s ease; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Les Verbes <span>тренажёр глаголов</span></div>
+</header>
+<main>
+  <div class="filter-row" id="filters"><button class="filter-btn active" onclick="setFilter('Все')">Все</button><button class="filter-btn" onclick="setFilter('Досуг')">Досуг</button><button class="filter-btn" onclick="setFilter('Спорт')">Спорт</button><button class="filter-btn" onclick="setFilter('Хобби')">Хобби</button><button class="filter-btn" onclick="setFilter('Повседневные')">Повседневные</button><button class="filter-btn" onclick="setFilter('Императив')">Императив</button></div>
+  <div class="card" id="card" onclick="flip()">
+    <div class="card-badge" id="cat">Досуг</div>
+    <div class="card-num" id="num">1 / 47</div>
+    <div class="card-fr" id="fr">aller au restaurant</div>
+    <div class="card-pron" id="pron">[а-лэ о рэс-то-ран]</div>
+    <div class="card-ru" id="ru" style="display:none">идти в ресторан</div>
+    <div class="card-example" id="ex" style="display:none">✦ On va au restaurant ce soir? → Идём в ресторан сегодня вечером?</div>
+    <div class="card-hint" id="hint">нажми чтобы открыть</div>
+  </div>
+  <div class="controls">
+    <span class="progress-text" id="prog">Осталось: 47</span>
+    <div class="btn-row" id="btns" style="display:none">
+      <button class="btn btn-learn" onclick="mark(false)">Не знала</button>
+      <button class="btn btn-know" onclick="mark(true)">Знала ✓</button>
+    </div>
+    <button class="btn btn-next" id="next-btn" style="display:none" onclick="next()">Следующий →</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n" style="color:var(--green)" id="s-know">0</div><div class="stat-l">Знаю</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--red)" id="s-nope">0</div><div class="stat-l">Учу</div></div>
+    <div class="stat"><div class="stat-n" id="s-tot">0</div><div class="stat-l">Всего</div></div>
+  </div>
+</main>
+
+<script>
+const ALL = [
+  // Досуг — выходить
+  {fr:"aller au restaurant",ru:"идти в ресторан",pron:"[а-лэ о рэс-то-ран]",cat:"Досуг",ex:"On va au restaurant ce soir? → Идём в ресторан сегодня вечером?"},
+  {fr:"aller au café",ru:"идти в кафе",pron:"[а-лэ о ка-фэ]",cat:"Досуг",ex:"J'aime aller au café le matin. → Я люблю ходить в кафе по утрам."},
+  {fr:"aller au cinéma",ru:"идти в кино",pron:"[а-лэ о си-нэ-ма]",cat:"Досуг",ex:"Tu veux aller au cinéma? → Хочешь пойти в кино?"},
+  {fr:"aller au concert",ru:"идти на концерт",pron:"[а-лэ о кон-сэр]",cat:"Досуг",ex:"Nous allons au concert samedi. → Мы идём на концерт в субботу."},
+  {fr:"aller au théâtre",ru:"идти в театр",pron:"[а-лэ о тэ-атр]",cat:"Досуг",ex:"Elle aime aller au théâtre. → Она любит ходить в театр."},
+  {fr:"aller en discothèque",ru:"идти на дискотеку",pron:"[а-лэ ан диско-тэк]",cat:"Досуг",ex:"On va en discothèque ce week-end? → Идём на дискотеку на выходных?"},
+  {fr:"pêcher",ru:"рыбачить",pron:"[пэ-шэ]",cat:"Досуг",ex:"Mon père aime pêcher le dimanche. → Мой папа любит рыбачить в воскресенье."},
+  {fr:"jouer à la pétanque",ru:"играть в петанк",pron:"[жуэ а ля пэ-танк]",cat:"Досуг",ex:"Les Français aiment jouer à la pétanque. → Французы любят играть в петанк."},
+  {fr:"jouer de la musique",ru:"играть музыку",pron:"[жуэ дё ля мю-зик]",cat:"Досуг",ex:"Il joue de la musique tous les soirs. → Он играет музыку каждый вечер."},
+  {fr:"jouer aux jeux vidéos",ru:"играть в видеоигры",pron:"[жуэ о жё ви-дэо]",cat:"Досуг",ex:"Mon fils joue aux jeux vidéos. → Мой сын играет в видеоигры."},
+  {fr:"jouer aux cartes",ru:"играть в карты",pron:"[жуэ о карт]",cat:"Досуг",ex:"On joue aux cartes ce soir? → Сыграем в карты сегодня вечером?"},
+  {fr:"jouer aux jeux de société",ru:"играть в настольные игры",pron:"[жуэ о жё дё со-сьэ-тэ]",cat:"Досуг",ex:"Nous aimons jouer aux jeux de société. → Мы любим играть в настольные игры."},
+  {fr:"regarder la télévision",ru:"смотреть телевизор",pron:"[рёгар-дэ ля тэлэ-визьон]",cat:"Досуг",ex:"Le soir, je regarde la télé. → Вечером я смотрю телевизор."},
+  {fr:"tricoter",ru:"вязать",pron:"[три-ко-тэ]",cat:"Досуг",ex:"Ma grand-mère aime tricoter. → Моя бабушка любит вязать."},
+  {fr:"voyager",ru:"путешествовать",pron:"[вуа-йа-жэ]",cat:"Досуг",ex:"J'adore voyager en Europe. → Я обожаю путешествовать по Европе."},
+  {fr:"visiter",ru:"посещать",pron:"[ви-зи-тэ]",cat:"Досуг",ex:"Nous visitons Paris ce week-end. → Мы посещаем Париж на выходных."},
+  {fr:"lire",ru:"читать",pron:"[лир]",cat:"Досуг",ex:"J'aime lire le soir. → Я люблю читать вечером."},
+  {fr:"faire des mots croisés",ru:"разгадывать кроссворды",pron:"[фэр дэ мо круа-зэ]",cat:"Досуг",ex:"Il fait des mots croisés le matin. → Он разгадывает кроссворды по утрам."},
+  {fr:"jouer aux échecs",ru:"играть в шахматы",pron:"[жуэ о зэ-шэк]",cat:"Досуг",ex:"Tu sais jouer aux échecs? → Ты умеешь играть в шахматы?"},
+  // Спорт
+  {fr:"jouer au foot",ru:"играть в футбол",pron:"[жуэ о фут]",cat:"Спорт",ex:"Je joue au foot le week-end. → Я играю в футбол на выходных."},
+  {fr:"jouer au tennis",ru:"играть в теннис",pron:"[жуэ о тэнис]",cat:"Спорт",ex:"Elle joue au tennis depuis 5 ans. → Она играет в теннис уже 5 лет."},
+  {fr:"faire du vélo",ru:"кататься на велосипеде",pron:"[фэр дю вэло]",cat:"Спорт",ex:"Mon frère fait du vélo tous les jours. → Мой брат катается каждый день."},
+  {fr:"faire de la natation",ru:"заниматься плаванием",pron:"[фэр дё ля ната-сьон]",cat:"Спорт",ex:"Je fais de la natation le matin. → Я плаваю по утрам."},
+  {fr:"faire du yoga",ru:"заниматься йогой",pron:"[фэр дю йога]",cat:"Спорт",ex:"Ma mère fait du yoga. → Моя мама занимается йогой."},
+  {fr:"faire de la randonnée",ru:"ходить в походы",pron:"[фэр дё ля рандо-нэ]",cat:"Спорт",ex:"Vous faites de la randonnée? → Вы ходите в походы?"},
+  {fr:"jouer du piano",ru:"играть на пианино",pron:"[жуэ дю пьяно]",cat:"Хобби",ex:"Il joue du piano depuis un an. → Он играет на пианино уже год."},
+  {fr:"jouer de la guitare",ru:"играть на гитаре",pron:"[жуэ дё ля гитар]",cat:"Хобби",ex:"Je joue de la guitare le soir. → Я играю на гитаре вечером."},
+  // Повседневные глаголы
+  {fr:"habiter",ru:"жить / проживать",pron:"[а-би-тэ]",cat:"Повседневные",ex:"J'habite à Moscou. → Я живу в Москве."},
+  {fr:"travailler",ru:"работать",pron:"[тра-вайэ]",cat:"Повседневные",ex:"Je travaille le matin. → Я работаю по утрам."},
+  {fr:"parler",ru:"говорить",pron:"[пар-лэ]",cat:"Повседневные",ex:"Tu parles français? → Ты говоришь по-французски?"},
+  {fr:"manger",ru:"есть / кушать",pron:"[ман-жэ]",cat:"Повседневные",ex:"Je mange une pomme. → Я ем яблоко."},
+  {fr:"boire",ru:"пить",pron:"[буар]",cat:"Повседневные",ex:"Je bois du café. → Я пью кофе."},
+  {fr:"dormir",ru:"спать",pron:"[дор-мир]",cat:"Повседневные",ex:"Je dors huit heures. → Я сплю восемь часов."},
+  {fr:"aller",ru:"идти / ехать",pron:"[а-лэ]",cat:"Повседневные",ex:"Je vais à l'école. → Я иду в школу."},
+  {fr:"venir",ru:"приходить / приезжать",pron:"[вё-нир]",cat:"Повседневные",ex:"Il vient de Lyon. → Он приезжает из Лиона."},
+  {fr:"prendre",ru:"брать / принимать",pron:"[прандр]",cat:"Повседневные",ex:"Je prends le bus. → Я еду на автобусе."},
+  {fr:"faire",ru:"делать / заниматься",pron:"[фэр]",cat:"Повседневные",ex:"Qu'est-ce que tu fais? → Что ты делаешь?"},
+  {fr:"avoir",ru:"иметь",pron:"[а-вуар]",cat:"Повседневные",ex:"J'ai un chat. → У меня есть кот."},
+  {fr:"être",ru:"быть",pron:"[этр]",cat:"Повседневные",ex:"Je suis française. → Я француженка."},
+  // Императив
+  {fr:"Écoutez!",ru:"Слушайте!",pron:"[эку-тэ]",cat:"Императив",ex:"Écoutez la musique! → Слушайте музыку!"},
+  {fr:"Répétez!",ru:"Повторите!",pron:"[рэпэ-тэ]",cat:"Императив",ex:"Répétez, s'il vous plaît. → Повторите, пожалуйста."},
+  {fr:"Regardez!",ru:"Смотрите!",pron:"[рёгар-дэ]",cat:"Императив",ex:"Regardez le tableau! → Смотрите на доску!"},
+  {fr:"Ouvrez!",ru:"Откройте!",pron:"[ув-рэ]",cat:"Императив",ex:"Ouvrez la fenêtre! → Откройте окно!"},
+  {fr:"Fermez!",ru:"Закройте!",pron:"[фэр-мэ]",cat:"Императив",ex:"Fermez la porte! → Закройте дверь!"},
+  {fr:"Prenez!",ru:"Возьмите!",pron:"[прё-нэ]",cat:"Императив",ex:"Prenez un stylo! → Возьмите ручку!"},
+  {fr:"Faites!",ru:"Делайте!",pron:"[фэт]",cat:"Императив",ex:"Faites les devoirs! → Делайте домашнее задание!"},
+  {fr:"Allez!",ru:"Идите!",pron:"[а-лэ]",cat:"Императив",ex:"Allez dans la salle! → Идите в зал!"},
+];
+
+let idx=0, flipped=false, known=0, learn=0;
+let activeCat='Все', filtered=[];
+
+function getCats(){return['Все',...new Set(ALL.map(w=>w.cat))];}
+function buildFilters(){
+  document.getElementById('filters').innerHTML=getCats().map(c=>`<button class="filter-btn${c===activeCat?' active':''}" onclick="setFilter('${c}')">${c}</button>`).join('');
+}
+function setFilter(cat){
+  activeCat=cat;
+  filtered=cat==='Все'?[...ALL]:ALL.filter(w=>w.cat===cat);
+  idx=0;flipped=false;buildFilters();showCard();
+}
+function showCard(){
+  const w=filtered[idx];
+  if(!w)return;
+  flipped=false;
+  document.getElementById('cat').textContent=w.cat;
+  document.getElementById('num').textContent=(idx+1)+' / '+filtered.length;
+  document.getElementById('fr').textContent=w.fr;
+  document.getElementById('pron').textContent=w.pron;
+  document.getElementById('ru').textContent=w.ru;
+  document.getElementById('ex').textContent='✦ '+w.ex;
+  document.getElementById('ru').style.display='none';
+  document.getElementById('ex').style.display='none';
+  document.getElementById('btns').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('hint').textContent='нажми чтобы открыть';
+  document.getElementById('prog').textContent='Осталось: '+(filtered.length-idx);
+}
+function flip(){
+  if(flipped)return;
+  flipped=true;
+  document.getElementById('ru').style.display='block';
+  document.getElementById('ex').style.display='block';
+  document.getElementById('btns').style.display='flex';
+  document.getElementById('hint').textContent='знала?';
+}
+function mark(ok){
+  if(ok)known++;else learn++;
+  document.getElementById('btns').style.display='none';
+  document.getElementById('next-btn').style.display='block';
+  document.getElementById('s-know').textContent=known;
+  document.getElementById('s-nope').textContent=learn;
+  document.getElementById('s-tot').textContent=known+learn;
+}
+function next(){idx=(idx+1)%filtered.length;showCard();}
+document.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!flipped)flip();});
+filtered=[...ALL];
+buildFilters();
+showCard();
+</script>
+
+
+</body></html>
